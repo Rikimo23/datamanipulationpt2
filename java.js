@@ -59,3 +59,69 @@ const menuLinks = [
     //console.log(linkObj);
     //Create an a element
     const aEl = document.createElement("a");
+
+    // Set a's href attribute to the linkObj.href
+  aEl.setAttribute("href", linkObj.href);
+  // Set the text to linkObj.text
+  aEl.textContent = linkObj.text;
+  //Append a to the nav
+  topMenuEl.append(aEl);
+});
+
+const subMenuEl = document.getElementById("sub-menu");
+subMenuEl.style.height = "100%";
+subMenuEl.style.background = "var(--sub-menu-bg)";
+subMenuEl.classList.add("flex-around");
+subMenuEl.style.position = "absolute";
+subMenuEl.style.top = "0";
+
+const topMenuLinks = document.querySelectorAll("a");
+console.log(topMenuLinks);
+
+topMenuEl.addEventListener("click", (event) => {
+  event.preventDefault();
+  if (event.target.tagName !== "A") {
+    return;
+  } else {
+    //console.log(event.target);
+    topMenuLinks.forEach((a) => a.classList.remove("active"));
+    mainEl.innerHTML = `<h1>${event.target.textContent}</h1>`;
+    event.target.classList.toggle("active");
+
+    if (event.target.classList.contains("active")) {
+      const currentLink = event.target.innerHTML;
+      menuLinks.forEach((link) => {
+        if (link.text === currentLink) {
+          if (link.hasOwnProperty("subLinks")) {
+            subMenuEl.style.top = "100%";
+            buildSubMenuEl(link.subLinks);
+          } else {
+            subMenuEl.style.top = "0";
+          }
+        }
+      });
+    }
+  }
+});
+
+function buildSubMenuEl(array) {
+  subMenuEl.innerHTML = "";
+  array.forEach((link) => {
+    let aEl = document.createElement("a");
+    aEl.setAttribute("href", link.href);
+    aEl.innerHTML = link.text;
+    subMenuEl.append(aEl);
+  });
+}
+
+subMenuEl.addEventListener("click", (event) => {
+  event.preventDefault();
+  if (!event.target.matches("a")) {
+    return;
+  } else {
+    // console.log(event.target);
+    subMenuEl.style.top = "0";
+    topMenuLinks.forEach((link) => link.classList.remove("active"));
+    mainEl.innerHTML = `<h1>${event.target.innerHTML}</h1>`;
+  }
+});
